@@ -37,6 +37,12 @@ async function run() {
         res.send(result);
     })
 
+      //API for loading order data
+      app.get('/order', async(req, res)=>{
+        const result =  await orderCollection.find().toArray();
+        res.send(result);
+    })
+
     // API to store order 
     app.post('/order', async (req, res)=>{
       const item = req.body;
