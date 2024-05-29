@@ -29,25 +29,40 @@ async function run() {
     await client.connect();
 
     const menuCollection = client.db("menuManageDb").collection("menu");
-    const orderCollection = client.db("menuManageDb").collection("order")
-    
+    const orderCollection = client.db("menuManageDb").collection("order");
+    const userCollection = client.db("menuManageDb").collection("user");
+
     //API for loading menu data
-    app.get('/menu', async(req, res)=>{
-        const result =  await menuCollection.find().toArray();
-        res.send(result);
+    app.get('/menu', async (req, res) => {
+      const result = await menuCollection.find().toArray();
+      res.send(result);
     })
 
-      //API for loading order data
-      app.get('/order', async(req, res)=>{
-        const result =  await orderCollection.find().toArray();
-        res.send(result);
+    //API for loading order data
+    app.get('/order', async (req, res) => {
+      const result = await orderCollection.find().toArray();
+      res.send(result);
+    })
+
+    //API for loading user data
+    app.get('/user', async (req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
     })
 
     // API to store order 
-    app.post('/order', async (req, res)=>{
+    app.post('/order', async (req, res) => {
       const item = req.body;
       console.log(item);
       const result = await orderCollection.insertOne(item);
+      res.send(result);
+    })
+
+    // API to store user
+    app.post('/user', async (req, res) => {
+      const item = req.body;
+      console.log(item);
+      const result = await userCollection.insertOne(item);
       res.send(result);
     })
 
@@ -65,10 +80,10 @@ run().catch(console.dir);
 
 
 
-app.get('/', (req,res)=>{
-   res.send('Server is ready.')
+app.get('/', (req, res) => {
+  res.send('Server is ready.')
 })
 
-app.listen(port, ()=>{
-    console.log(`Serrver is running on port ${port}`)
+app.listen(port, () => {
+  console.log(`Serrver is running on port ${port}`)
 })
