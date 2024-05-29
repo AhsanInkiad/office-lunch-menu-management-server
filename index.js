@@ -29,14 +29,21 @@ async function run() {
     await client.connect();
 
     const menuCollection = client.db("menuManageDb").collection("menu");
-
-    // Loading menu data
+    const orderCollection = client.db("menuManageDb").collection("order")
+    
+    //API for loading menu data
     app.get('/menu', async(req, res)=>{
         const result =  await menuCollection.find().toArray();
         res.send(result);
     })
 
-
+    // API to store order 
+    app.post('/order', async (req, res)=>{
+      const item = req.body;
+      console.log(item);
+      const result = await orderCollection.insertOne(item);
+      res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
