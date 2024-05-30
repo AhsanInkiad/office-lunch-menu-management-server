@@ -88,7 +88,7 @@ async function run() {
 
 
   
-
+    // Updating user role to admin
     app.patch('/user/admin/:id', async (req, res)=>{
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)};
