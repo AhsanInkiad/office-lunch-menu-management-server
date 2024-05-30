@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5ussmjv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -32,25 +32,45 @@ async function run() {
     const orderCollection = client.db("menuManageDb").collection("order");
     const userCollection = client.db("menuManageDb").collection("user");
 
-    //API for loading menu data
+    
+    
+    // API FOR LOADING DATA
+
+    // 1) loading menu data
     app.get('/menu', async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
     })
 
-    //API for loading order data
+    // 2) loading order data
     app.get('/order', async (req, res) => {
       const result = await orderCollection.find().toArray();
       res.send(result);
     })
 
-    //API for loading user data
+    // 3) loading user data
     app.get('/user', async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
     })
 
-    // API to store order 
+    
+    
+    
+    
+    
+    
+    // API FOR STORING DATA
+
+    // 1) store menu
+    app.post('/menu', async (req, res) => {
+      const item = req.body;
+      console.log(item);
+      const result = await menuCollection.insertOne(item);
+      res.send(result);
+    })
+
+    // 2) store order 
     app.post('/order', async (req, res) => {
       const item = req.body;
       console.log(item);
@@ -58,7 +78,7 @@ async function run() {
       res.send(result);
     })
 
-    // API to store user
+    // 3) store user
     app.post('/user', async (req, res) => {
       const item = req.body;
       console.log(item);
@@ -66,6 +86,29 @@ async function run() {
       res.send(result);
     })
 
+
+  
+
+    app.patch('/user/admin/:id', async (req, res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set: {
+          role: 'admin'
+        },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    })
+
+    // Cheking if the user is an admin
+    app.get('/user/admin/:email', async(req, res)=>{
+      const email = req.params.email;
+      const query = {email: email};
+      const user = await userCollection.findOne(query);
+      const result = {admin: user?.role === 'admin'};
+      res.send(result);
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
